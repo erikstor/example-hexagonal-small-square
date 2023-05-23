@@ -1,14 +1,8 @@
 import {Module} from '@nestjs/common';
-import {UsersModule} from './users/users.module';
-import {UsersController} from './users/infra/controllers/users.controller';
-import {UsersService} from './users/app/users.service';
-// import process from "process";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ConfigModule} from "@nestjs/config";
-import {UserRepository} from "./users/infra/repositories/user.repository";
-import {AuthService} from "./users/app/auth.service";
-import {JwtService} from "@nestjs/jwt";
-import {RoleRepository} from "./users/infra/repositories/role.repository";
+
+import {SmallSquareModule} from './small-square/small-square.module';
 
 
 @Module({
@@ -24,13 +18,12 @@ import {RoleRepository} from "./users/infra/repositories/role.repository";
             autoLoadEntities: true,
             synchronize: true,
             entities: [
-                './users/domain/entities/*.ts'
+                './small-square/domain/entities/*.ts'
             ]
         }),
-        UsersModule,
+        SmallSquareModule,
     ],
-    controllers: [UsersController],
-    providers: [UsersService, UserRepository, AuthService, JwtService, RoleRepository],
+    providers: [],
 })
 export class AppModule {
 }

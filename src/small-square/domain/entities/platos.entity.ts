@@ -24,7 +24,9 @@ export class PlatosEntity {
     @Column('varchar')
     url_imagen!: string
 
-    @Column('boolean')
+    @Column('boolean', {
+        default: true
+    })
     activo!: boolean
 
     @ManyToOne(
@@ -33,14 +35,14 @@ export class PlatosEntity {
         {
             eager: true
         })
-    categoria!: CategoriaEntity
+    categoria!: CategoriaEntity | number
 
     @ManyToOne(
         () => RestaurantesEntity,
         restaurante => restaurante.id,
         {
-            eager: true
+            eager: false
         })
-    restaurante!: RestaurantesEntity
+    restaurante!: RestaurantesEntity | number
 
 }

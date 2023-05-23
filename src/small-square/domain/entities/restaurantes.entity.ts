@@ -26,7 +26,7 @@ export class RestaurantesEntity {
     nit!: string
 
     @Column('varchar')
-    id_propietario!: string
+    id_propietario!: number
 
     @OneToMany(
         () => PlatosEntity,

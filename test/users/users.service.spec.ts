@@ -1,8 +1,8 @@
 // Tests that the findUserByEmail method returns a User object.
-import {UsersService} from "../../src/users/app/users.service";
+import {UsersService} from "../../src/small-square/app/users.service";
 import {NotFoundException} from "@nestjs/common";
-import {UserRepository} from "../../src/users/infra/repositories/user.repository";
-import {UsuariosEntity} from "../../src/users/domain/entities";
+import {UserRepository} from "../../src/small-square/infra/repositories/user.repository";
+import {UsuariosEntity} from "../../src/small-square/domain/entities";
 
 it("Test para retornar una instancia de usuario", async () => {
     const userRepositoryMock = {
