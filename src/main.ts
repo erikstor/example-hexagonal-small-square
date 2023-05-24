@@ -12,7 +12,7 @@ async function bootstrap() {
         .setTitle('Microservicio de usuarios')
         .setDescription('Api que expone las funcionalidades correspondientes al microservicio de la plazoleta')
         .setVersion('1.0')
-        .addTag('Plazoleta')
+        .addBearerAuth()
         .addServer('api')
         .build();
 

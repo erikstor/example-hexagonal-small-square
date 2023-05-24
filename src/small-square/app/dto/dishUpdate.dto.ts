@@ -1,4 +1,4 @@
-import {IsBoolean, IsNotEmpty, IsNumber, IsString, Min, Validate} from "class-validator";
+import {IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min, Validate} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {
     UrlFieldValidator
@@ -74,6 +74,7 @@ export class DishUpdateDto {
     })
     @IsNotEmpty({message: 'El campo activo es requerido'})
     @IsBoolean({message: 'El campo activo debe ser un boleano'})
+    @IsOptional()
     activo?: boolean
 
 }

@@ -32,7 +32,7 @@ export class RestaurantesEntity {
         () => PlatosEntity,
         platos => platos.id,
         {
-            eager: true
+            eager: false
         })
     platos!: PlatosEntity
 }

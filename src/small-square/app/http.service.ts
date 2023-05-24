@@ -1,39 +1,39 @@
-import {Injectable} from '@nestjs/common';
+import {HttpException, Injectable} from '@nestjs/common';
 import * as axios from 'axios'
-import {ConfigService} from "@nestjs/config";
+import {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 
 @Injectable()
 export class HttpService {
 
-    constructor(
-        private readonly configService: ConfigService
-    ) {
+    constructor() {
     }
 
-    async request(): Promise<any> {
+    async request(options: AxiosRequestConfig): Promise<any> {
 
-        // todo trasladar este objeto a una interfaz y revisar si el configService es necesario
-        return axios.default({
-            method: 'post',
-            url: '/user/12345',
-            data: {
-                firstName: 'Fred',
-                lastName: 'Flintstone'
-            },
-            headers: {
-                'Authorization': '',
-                'Content-Type': 'application/json'
-            }
-        });
+        let error: AxiosError
 
-    }
+        const resp: AxiosResponse | void = await axios.default(options)
+            .then((resp: AxiosResponse) => {
+                return resp
+            }).catch((err: AxiosError) => {
+                error = err
+            });
 
-    async findOneById(id: number): Promise<any> {
-        //todo peticion con axios al microservicio de usuarios
-    }
+        if (error) {
+            throw new HttpException(
+                {
+                    message: 'El consumo de un servicio externo fallo',
+                    detail: {
+                        message: 'El consumo de un servicio externo fallo',
+                        detail: error.response.data["message"] || error.message,
+                        request: options
+                    }
+                },
+                error.response.status
+            )
+        }
 
-    async findRoleByName(name: string) {
-        //todo peticion con axios al microservicio de usuarios
+        return {...resp}
     }
 
 }

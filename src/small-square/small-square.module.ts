@@ -1,8 +1,6 @@
 import {Module} from '@nestjs/common';
 import {RestaurantController} from "./infra/controllers/restaurant.controller";
-import {UsersService} from "./app/users.service";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {AuthService} from './app/auth.service';
 import {JwtModule, JwtService} from "@nestjs/jwt";
 import {
     CategoriaEntity,
@@ -12,19 +10,24 @@ import {
     RestaurantesEntity
 } from "./domain/entities";
 import {RestaurantService} from "./app/restaurant.service";
-import {RestaurantRepository, RoleRepository, UserRepository, DishRepository} from "./infra/repositories";
+import {
+    RestaurantRepository,
+    DishRepository,
+    CategoryRepository
+} from "./infra/repositories";
+import {HttpService} from "./app/http.service";
+import {ConfigService} from "@nestjs/config";
 
 @Module({
     controllers: [RestaurantController],
     providers: [
-        UsersService,
-        UserRepository,
-        RoleRepository,
-        AuthService,
+        ConfigService,
         JwtService,
         RestaurantService,
         RestaurantRepository,
-        DishRepository
+        DishRepository,
+        HttpService,
+        CategoryRepository
     ],
     imports: [
         TypeOrmModule.forFeature([
