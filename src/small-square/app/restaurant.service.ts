@@ -7,8 +7,8 @@ import {
     RestaurantEmployeeRepository,
     RestaurantRepository
 } from "../infra/repositories";
-import {DishCreateDto, DishUpdateDto, OrderCreateDto, RestaurantCreateDto} from "./dto";
-import {PedidosEntity, PedidosPlatosEntity, PlatosEntity, RestaurantesEntity} from "../domain/entities";
+import {AssignOrder, DishCreateDto, DishUpdateDto, OrderCreateDto, RestaurantCreateDto, UpdateStatusOrder} from "./dto";
+import {PedidosEntity, PedidosPlatosEntity, PlatosEntity, RestauranteEmpleadoEntity, RestaurantesEntity} from "../domain/entities";
 import {HttpService} from "./http.service";
 import {ConfigService} from "@nestjs/config";
 import {OWNER_ROLE} from "../infra/utils/constants/global";
@@ -173,12 +173,13 @@ export class RestaurantService {
     }
 
 
-    async getDishs({take, skip}: { take: number, skip: number }): Promise<{ data: PlatosEntity[], count: number }> {
+    async getDishs({take, skip, restaurant}: { take: number, skip: number, restaurant: number }): Promise<{ data: PlatosEntity[], count: number }> {
         try {
             const [data, count] = await this.dishRepository.createQueryBuilder('platos')
                 .skip(skip)
                 .take(take)
                 .where("platos.activo = true")
+                .andWhere('platos.restaurante = :restaurant', {restaurant})
                 .innerJoinAndSelect('platos.categoria', 'categoria', 'platos.categoria = categoria.id')
                 .groupBy('categoria')
                 .addGroupBy('platos.id')
@@ -329,7 +330,6 @@ export class RestaurantService {
     }) {
         try {
 
-
             const [data, count] = await this.orderRepository.createQueryBuilder('pedidos')
                 .skip(skip)
                 .take(take)
@@ -348,5 +348,107 @@ export class RestaurantService {
             throw new InternalServerErrorException(e)
         }
     }
+
+
+    async assignOrder(data: AssignOrder): Promise<PedidosEntity> {
+        try {
+
+            const restaurant = await this.getRestaurantById(data.restaurant)
+
+            if(!restaurant) throw new BadRequestException('El restaurante no existe')
+
+            const order = await this.getOrderById(data.order)
+            
+            if(order.id_restaurante !== restaurant.id) throw new BadRequestException('El pedido no le pertenece a este restaurante')
+            
+            if(order.id_chef !== null) throw new BadRequestException('El pedido ya se encuentra asignado')
+
+            const employeeRestaurant = await this.getEmployeeRestaurantByIds(data.chef, data.restaurant)
+
+            if(!employeeRestaurant) throw new BadRequestException('El chef no esta relacionado con ese restaurante')
+
+            order.id_chef = employeeRestaurant.id
+
+            return this.orderRepository.save(order)
+
+        } catch (e) {
+            throw new InternalServerErrorException(e)
+        }
+    }
+
+    async getOrderById(id: number) : Promise<PedidosEntity> {
+
+        const order = this.orderRepository.findOneBy({id})
+
+        if(!order) throw new BadRequestException('El pedido no existe')
+
+        return order
+
+    }
+
+    async getRestaurantById(id: number) : Promise<RestaurantesEntity> {
+
+        return this.restaurantRepository.findOneBy({id})
+
+    }
+
+
+    async getEmployeeRestaurantByIds(employee: number, restaurant: number): Promise<RestauranteEmpleadoEntity>{
+        return this.restaurantEmployeeRepository.findOneBy({
+            restaurante: restaurant,
+            id_usuario: employee
+        })
+    }
+    
+
+    async updateStatusToDeliberyOrder(data: UpdateStatusOrder): Promise<PedidosEntity> {
+        try {
+
+            const order = await this.getOrderById(data.order)            
+
+            if (data.status === estados.DELIBERY && order.estado !== estados.READY) {
+                throw new BadRequestException('El pedido que intenta marca como entregado aun no esta listo')
+            }
+
+            if(order.estado === estados.DELIBERY && data.status !== estados.READY) {
+                throw new BadRequestException('Los pedidos que fueron entregados solamente pueden ser actualizados al estados "Listo"')
+            }
+
+            // TODO: agregar pin de seguridad en la entidad y validarlo en el body             
+            return this.updateStatusOrder(order, data.status)
+        } catch (e) {
+            throw new InternalServerErrorException(e)
+        }
+    }
+
+
+    async updateStatusToPendingOrder(data: UpdateStatusOrder): Promise<PedidosEntity> {
+        try {
+
+            const order = await this.getOrderById(data.order)            
+
+            if (order.estado !== estados.PEN) {
+                throw new BadRequestException('Lo sentimos, tu pedido ya está en preparación y no puede cancelarse')
+            }
+
+            return this.updateStatusOrder(order, data.status)
+        } catch (e) {
+            throw new InternalServerErrorException(e)
+        }
+    }
+
+    
+
+    async updateStatusOrder(order: PedidosEntity, status: string): Promise<PedidosEntity> {
+        try {
+                 
+            order.estado = estados[status]                                       
+
+            return this.orderRepository.save(order)
+        } catch (e) {
+            throw new InternalServerErrorException(e)
+        }
+    }
+
 
 }

@@ -5,6 +5,8 @@ export interface OrderInterfaces {
 
 export enum estados {
     PEN = "pendiente",
-    FIN = "finalizado",
+    DELIBERY = "entregado",
     PREP = "preparacion",
+    READY = "listo",
+    CANCEL = "cancelado",
 }

@@ -33,6 +33,7 @@ export class PedidosEntity {
     @Column('varchar')
     descripcion!: string
 
+    @Column()
     @ManyToOne(
         () => UsuariosEntity,
         (user) => user.id,
@@ -40,13 +41,15 @@ export class PedidosEntity {
     @JoinColumn({name: 'id_cliente'})
     id_cliente: UsuariosEntity | number
 
-    @ManyToOne(() => RestaurantesEntity)
+    @Column()
+    @ManyToOne(() => RestaurantesEntity, restaurant => restaurant.id)
     @JoinColumn({name: 'id_restaurante'})
     id_restaurante!: RestaurantesEntity | number
 
+    @Column({nullable: true})
     @ManyToOne(() => RestauranteEmpleadoEntity)
-    @JoinColumn({name: 'id_chef'})
-    id_chef!: RestauranteEmpleadoEntity | number
+    @JoinColumn({name: 'id_chef' })
+    id_chef?: RestauranteEmpleadoEntity | number
 
     @OneToMany(() => PedidosPlatosEntity, pp => pp.pedido)
     pedidos_platos!: PedidosPlatosEntity

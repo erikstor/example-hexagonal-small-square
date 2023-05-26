@@ -47,6 +47,7 @@ export class OrderCreateDto {
     chef: number
 
 
+    //todo: validar con un each los objectos internos
     @ApiProperty({
         example: [
             {

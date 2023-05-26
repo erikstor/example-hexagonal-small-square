@@ -1,6 +1,6 @@
 import {Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards} from '@nestjs/common';
 import {ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags} from "@nestjs/swagger";
-import {DishCreateDto, RestaurantCreateDto, DishUpdateDto, DishSetActiveDto, OrderCreateDto} from "../../app/dto";
+import {DishCreateDto, RestaurantCreateDto, DishUpdateDto, DishSetActiveDto, OrderCreateDto, AssignOrder, UpdateStatusOrder} from "../../app/dto";
 import {RestaurantService} from "../../app/restaurant.service";
 import {OwnerGuard, AdminGuard, ClientGuard, EmployeeGuard} from "../guards";
 import {RegisterEmployeeDto} from "../../app/dto/registerEmployee.dto";
@@ -123,6 +123,12 @@ export class RestaurantController {
         type: 'number',
         example: 1
     })
+    @ApiQuery({
+        name: 'restaurant',
+        description: 'Restaurante del cual desea ordenar',
+        type: 'number',
+        example: 1
+    })
     @ApiOperation({summary: 'Muestra los platos con base a la paginacion'})
     @ApiResponse({status: 200, description: 'Retorna un listado de platos'})
     @ApiResponse({status: 400, description: 'Alguno de los parametros enviados en el body son incorrectos'})
@@ -130,7 +136,7 @@ export class RestaurantController {
     @ApiResponse({status: 500, description: 'Error en el servidor'})
     @UseGuards(ClientGuard)
     //todo crear un dto para esto
-    getDishs(@Query() query: { take: number, skip: number }) {
+    getDishs(@Query() query: { take: number, skip: number, restaurant: number }) {
         return this.restaurantService.getDishs(query)
     }
 
@@ -201,11 +207,50 @@ export class RestaurantController {
     @ApiResponse({status: 400, description: 'Alguno de los parametros enviados en el body son incorrectos'})
     @ApiResponse({status: 401, description: 'Debe de tener el rol cliente'})
     @ApiResponse({status: 500, description: 'Error en el servidor'})
-    // @UseGuards(EmployeeGuard)
+    @UseGuards(EmployeeGuard)
     //todo crear un dto para esto
     getOrders(@Query() query: { take: number, skip: number, restaurant: number, status: string }) {
         return this.restaurantService.getOrders(query)
     }
 
+
+    @Post('/orders/assign')
+    @ApiBody({
+        type: AssignOrder,
+    })
+    @ApiBearerAuth()
+    @ApiTags('Ordenes')
+    @ApiOperation({summary: 'Asigna una orden a un chef'})
+    @ApiResponse({status: 200, description: 'Retorna una orden en su forma basica con la asignacion del chef'})
+    @ApiResponse({status: 400, description: 'Alguno de los parametros enviados en el body son incorrectos'})
+    @ApiResponse({status: 401, description: 'Debe de tener el rol empleado'})
+    @ApiResponse({status: 500, description: 'Error en el servidor'})
+    @UseGuards(EmployeeGuard)    
+    assignOrder(@Body() body: AssignOrder) {
+        return this.restaurantService.assignOrder(body)
+    }
+
+
+    @Patch('/orders/status')
+    @ApiBody({
+        type: UpdateStatusOrder,
+    })
+    @ApiBearerAuth()
+    @ApiTags('Ordenes')
+    @ApiOperation({summary: 'Actualiza el estado de la orden'})
+    @ApiResponse({status: 200, description: 'Retorna una orden en su forma basica con la actualizacion del estado'})
+    @ApiResponse({status: 400, description: 'Alguno de los parametros enviados en el body son incorrectos'})
+    @ApiResponse({status: 401, description: 'Debe de tener el rol empleado'})
+    @ApiResponse({status: 500, description: 'Error en el servidor'})
+    @UseGuards(EmployeeGuard)    
+    updateStatusToDeliberyOrder(@Body() body: UpdateStatusOrder) {
+
+        if(body.status !== estados.CANCEL) {
+            return this.restaurantService.updateStatusToDeliberyOrder(body)
+        } else {
+            return this.restaurantService.updateStatusToPendingOrder(body)
+        }
+
+    }
 
 }
