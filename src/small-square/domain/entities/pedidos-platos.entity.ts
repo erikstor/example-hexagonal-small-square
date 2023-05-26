@@ -19,12 +19,12 @@ export class PedidosPlatosEntity {
         () => PlatosEntity,
         (platos) => platos.id,
     )
-    platos!: PlatosEntity
+    platos!: PlatosEntity | number
 
     @ManyToOne(
         () => PedidosEntity,
         (pedido) => pedido.id,
     )
-    pedido!: PlatosEntity
+    pedido!: PlatosEntity | number
 
 }

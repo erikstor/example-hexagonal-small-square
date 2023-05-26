@@ -13,10 +13,12 @@ import {RestaurantService} from "./app/restaurant.service";
 import {
     RestaurantRepository,
     DishRepository,
-    CategoryRepository
+    CategoryRepository, OrderRepository, RestaurantEmployeeRepository, OrderDishRepository
 } from "./infra/repositories";
 import {HttpService} from "./app/http.service";
 import {ConfigService} from "@nestjs/config";
+import {UsuariosEntity} from "./domain/entities/usuarios.entity";
+import {RolesEntity} from "./domain/entities/roles.entity";
 
 @Module({
     controllers: [RestaurantController],
@@ -27,7 +29,10 @@ import {ConfigService} from "@nestjs/config";
         RestaurantRepository,
         DishRepository,
         HttpService,
-        CategoryRepository
+        CategoryRepository,
+        OrderRepository,
+        OrderDishRepository,
+        RestaurantEmployeeRepository
     ],
     imports: [
         TypeOrmModule.forFeature([
@@ -37,6 +42,8 @@ import {ConfigService} from "@nestjs/config";
             PlatosEntity,
             RestauranteEmpleadoEntity,
             RestaurantesEntity,
+            UsuariosEntity,
+            RolesEntity
         ]),
         JwtModule.register({secret: 'hard!to-guess_secret'})
     ],

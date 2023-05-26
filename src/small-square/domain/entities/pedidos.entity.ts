@@ -1,12 +1,18 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm"
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne, OneToMany,
+    OneToOne,
+    PrimaryColumn,
+    PrimaryGeneratedColumn
+} from "typeorm"
 import {RestaurantesEntity} from "./restaurantes.entity";
 import {RestauranteEmpleadoEntity} from "./restaurante-empleado.entity";
+import {UsuariosEntity} from "./usuarios.entity";
+import {estados} from "../../app/interfaces/order.interfaces";
+import {PedidosPlatosEntity} from "./pedidos-platos.entity";
 
-enum estados {
-    PEN = "pendiente",
-    FIN = "finalizado",
-    PREP = "preparacion",
-}
 
 @Entity({
     name: 'pedidos'
@@ -15,10 +21,10 @@ export class PedidosEntity {
 
     @PrimaryGeneratedColumn('increment')
     @PrimaryColumn('bigint')
-    id!: number
+    id?: number
 
-    @Column('date')
-    fecha!: string
+    @Column({type: 'date', default: new Date()})
+    fecha!: Date
 
 
     @Column({type: 'enum', enum: estados, default: estados.PEN})
@@ -27,15 +33,22 @@ export class PedidosEntity {
     @Column('varchar')
     descripcion!: string
 
-    @Column('bigint')
-    id_cliente!: number
+    @ManyToOne(
+        () => UsuariosEntity,
+        (user) => user.id,
+    )
+    @JoinColumn({name: 'id_cliente'})
+    id_cliente: UsuariosEntity | number
 
-    @OneToOne(() => RestaurantesEntity)
-    @JoinColumn()
-    restaurante!: RestaurantesEntity
+    @ManyToOne(() => RestaurantesEntity)
+    @JoinColumn({name: 'id_restaurante'})
+    id_restaurante!: RestaurantesEntity | number
 
-    @OneToOne(() => RestauranteEmpleadoEntity)
-    @JoinColumn()
-    chef!: RestauranteEmpleadoEntity
+    @ManyToOne(() => RestauranteEmpleadoEntity)
+    @JoinColumn({name: 'id_chef'})
+    id_chef!: RestauranteEmpleadoEntity | number
+
+    @OneToMany(() => PedidosPlatosEntity, pp => pp.pedido)
+    pedidos_platos!: PedidosPlatosEntity
 
 }

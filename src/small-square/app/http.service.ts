@@ -25,7 +25,7 @@ export class HttpService {
                     message: 'El consumo de un servicio externo fallo',
                     detail: {
                         message: 'El consumo de un servicio externo fallo',
-                        detail: error.response.data["message"] || error.message,
+                        detail: error.response.data['message'] || error.response.data["message"] || error.message,
                         request: options
                     }
                 },

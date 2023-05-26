@@ -28,7 +28,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     getDetail(exception: HttpException): string {
 
-        if (exception.message === exception.getResponse()['message']) {
+        if (exception.getResponse()['response']?.detail?.detail) {
+            return exception.getResponse()['response'].detail.detail
+        } else if (exception.message === exception.getResponse()['message']) {
             return ''
         } else if (isArray(exception.getResponse()['message'])) {
             return exception.getResponse()['message']
