@@ -1,5 +1,5 @@
 import {ValidatorConstraint, ValidatorConstraintInterface} from "class-validator";
-import { estados } from "src/small-square/app/interfaces/order.interfaces";
+import { estados } from "../../app/interfaces/order.interfaces";
 
 @ValidatorConstraint()
 export class StatusFieldValidator implements ValidatorConstraintInterface {

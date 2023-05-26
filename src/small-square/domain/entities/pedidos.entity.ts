@@ -52,6 +52,6 @@ export class PedidosEntity {
     id_chef?: RestauranteEmpleadoEntity | number
 
     @OneToMany(() => PedidosPlatosEntity, pp => pp.pedido)
-    pedidos_platos!: PedidosPlatosEntity
+    pedidos_platos!: PedidosPlatosEntity | undefined
 
 }

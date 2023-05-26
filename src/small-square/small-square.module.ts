@@ -19,6 +19,7 @@ import {HttpService} from "./app/http.service";
 import {ConfigService} from "@nestjs/config";
 import {UsuariosEntity} from "./domain/entities/usuarios.entity";
 import {RolesEntity} from "./domain/entities/roles.entity";
+import { OrderService } from './app/order.service';
 
 @Module({
     controllers: [RestaurantController],
@@ -32,7 +33,8 @@ import {RolesEntity} from "./domain/entities/roles.entity";
         CategoryRepository,
         OrderRepository,
         OrderDishRepository,
-        RestaurantEmployeeRepository
+        RestaurantEmployeeRepository,
+        OrderService
     ],
     imports: [
         TypeOrmModule.forFeature([

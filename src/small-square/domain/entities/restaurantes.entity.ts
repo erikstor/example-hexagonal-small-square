@@ -34,5 +34,5 @@ export class RestaurantesEntity {
         {
             eager: false
         })
-    platos!: PlatosEntity
+    platos!: PlatosEntity | undefined
 }

@@ -5,12 +5,14 @@ import {RestaurantService} from "../../app/restaurant.service";
 import {OwnerGuard, AdminGuard, ClientGuard, EmployeeGuard} from "../guards";
 import {RegisterEmployeeDto} from "../../app/dto/registerEmployee.dto";
 import {estados} from "../../app/interfaces/order.interfaces";
+import { OrderService } from '../../app/order.service';
 
 @Controller('restaurants')
 export class RestaurantController {
 
     constructor(
-        private readonly restaurantService: RestaurantService
+        private readonly restaurantService: RestaurantService,
+        private readonly orderService: OrderService
     ) {
     }
 
@@ -154,7 +156,7 @@ export class RestaurantController {
     @ApiResponse({status: 500, description: 'Error en el servidor'})
     @UseGuards(ClientGuard)
     createOrder(@Req() req: Request, @Body() body: OrderCreateDto) {
-        return this.restaurantService.createOrder(body, req['user'])
+        return this.orderService.createOrder(body, req['user'])
     }
 
     @Post('/register-employee')
@@ -210,7 +212,7 @@ export class RestaurantController {
     @UseGuards(EmployeeGuard)
     //todo crear un dto para esto
     getOrders(@Query() query: { take: number, skip: number, restaurant: number, status: string }) {
-        return this.restaurantService.getOrders(query)
+        return this.orderService.getOrders(query)
     }
 
 
@@ -227,11 +229,11 @@ export class RestaurantController {
     @ApiResponse({status: 500, description: 'Error en el servidor'})
     @UseGuards(EmployeeGuard)    
     assignOrder(@Body() body: AssignOrder) {
-        return this.restaurantService.assignOrder(body)
+        return this.orderService.assignOrder(body)
     }
 
 
-    @Patch('/orders/status')
+    @Patch('/orders/employee/status')
     @ApiBody({
         type: UpdateStatusOrder,
     })
@@ -244,13 +246,24 @@ export class RestaurantController {
     @ApiResponse({status: 500, description: 'Error en el servidor'})
     @UseGuards(EmployeeGuard)    
     updateStatusToDeliberyOrder(@Body() body: UpdateStatusOrder) {
+        return this.orderService.updateStatusToDeliberyOrder(body)
+    }
 
-        if(body.status !== estados.CANCEL) {
-            return this.restaurantService.updateStatusToDeliberyOrder(body)
-        } else {
-            return this.restaurantService.updateStatusToPendingOrder(body)
-        }
 
+    @Patch('/orders/client/status')
+    @ApiBody({
+        type: UpdateStatusOrder,
+    })
+    @ApiBearerAuth()
+    @ApiTags('Ordenes')
+    @ApiOperation({summary: 'Actualiza el estado de la orden'})
+    @ApiResponse({status: 200, description: 'Retorna una orden en su forma basica con la actualizacion del estado'})
+    @ApiResponse({status: 400, description: 'Alguno de los parametros enviados en el body son incorrectos'})
+    @ApiResponse({status: 401, description: 'Debe de tener el rol empleado'})
+    @ApiResponse({status: 500, description: 'Error en el servidor'})
+    @UseGuards(ClientGuard)    
+    updateStatusToPendingOrder(@Body() body: UpdateStatusOrder) {
+        return this.orderService.updateStatusToPendingOrder(body)        
     }
 
 }

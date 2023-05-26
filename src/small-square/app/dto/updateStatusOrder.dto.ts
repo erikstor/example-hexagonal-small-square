@@ -1,6 +1,6 @@
 import {IsNotEmpty, IsNumber, IsString, Min, Validate} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
-import { StatusFieldValidator } from "src/small-square/infra/validators/order.validator";
+import { StatusFieldValidator } from "../../infra/validators/order.validator";
 import { estados } from "../interfaces/order.interfaces";
 
 
