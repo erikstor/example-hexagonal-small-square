@@ -19,21 +19,31 @@ import { AssignOrder, OrderCreateDto, UpdateStatusOrder } from './dto';
 import { TokenUser } from './interfaces';
 import { estados } from './interfaces/order.interfaces';
 import { RestaurantService } from './restaurant.service';
+import { HttpService } from './http.service';
+import { ConfigService } from '@nestjs/config';
+import { In } from 'typeorm';
+import {
+  MESSAGE_SENDED_WHEN_CREATE_ORDER,
+  MESSAGE_SENDED_WHEN_ORDER_IS_READY,
+} from '../infra/utils/constants/global';
 
 @Injectable()
 export class OrderService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly dishRepository: DishRepository,
     private readonly orderRepository: OrderRepository,
     private readonly orderDishRepository: OrderDishRepository,
     private readonly restaurantRepository: RestaurantRepository,
     private readonly restaurantEmployeeRepository: RestaurantEmployeeRepository,
     private readonly restaurantService: RestaurantService,
+    private readonly httpService: HttpService,
   ) {}
 
   async createOrder(
     data: OrderCreateDto,
     client: TokenUser,
+    token: string,
   ): Promise<{
     order: PedidosEntity;
     items: PedidosPlatosEntity[];
@@ -41,6 +51,7 @@ export class OrderService {
     const existOrderInProcess: PedidosEntity = await this.findClientWithOrder(
       +client.id,
     );
+
     if (existOrderInProcess) {
       throw new BadRequestException(
         'Este usuario ya tiene una orden en proceso',
@@ -83,7 +94,7 @@ export class OrderService {
       orderToSave.id_chef = data.chef;
 
       const order = await this.orderRepository.save(orderToSave);
-      
+
       const orderDishes = [];
 
       for (const item of data.dishes) {
@@ -100,6 +111,21 @@ export class OrderService {
         orderDishes,
       );
 
+      await this.httpService.request({
+        url: `${this.configService.get(
+          'BASE_URL_MESSAGE_MICROSERVICE',
+        )}/send-message`,
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: token,
+        },
+        method: 'POST',
+        data: {
+          body: `${MESSAGE_SENDED_WHEN_CREATE_ORDER} ${order.codigo}`,
+          to: client.celular,
+        },
+      });
+
       return { order, items: result };
     } catch (e) {
       throw new InternalServerErrorException(e);
@@ -110,7 +136,7 @@ export class OrderService {
     try {
       return this.orderRepository.findOneBy({
         id_cliente: client,
-        estado: estados.PREP,
+        estado: In([estados.PREP, estados.PEN, estados.READY]),
       });
     } catch (e) {
       throw new InternalServerErrorException(e);
@@ -221,6 +247,7 @@ export class OrderService {
 
   async updateStatusToDeliberyOrder(
     data: UpdateStatusOrder,
+    token: string,
   ): Promise<PedidosEntity> {
     try {
       const order = await this.getOrderById(data.order);
@@ -237,8 +264,35 @@ export class OrderService {
         );
       }
 
-      // TODO: agregar pin de seguridad en la entidad y validarlo en el body
-      return this.updateStatusOrder(order, data.status);
+      if (
+        order.estado === estados.READY &&
+        data.status === estados.DELIBERY &&
+        order.codigo !== data.code
+      ) {
+        throw new BadRequestException('El código es invalido');
+      }
+
+      const orderUpdated = await this.updateStatusOrder(order, data.status);
+
+      if (orderUpdated.estado === estados.READY) {
+        await this.httpService.request({
+          url: `${this.configService.get(
+            'BASE_URL_MESSAGE_MICROSERVICE',
+          )}/send-message`,
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token,
+          },
+          method: 'POST',
+          data: {
+            body: `${MESSAGE_SENDED_WHEN_ORDER_IS_READY}`,
+            to: order.id_cliente['celular'],
+          },
+        });
+      }
+
+      delete orderUpdated.id_cliente;
+      return { ...orderUpdated };
     } catch (e) {
       throw new InternalServerErrorException(e);
     }

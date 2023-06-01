@@ -3,7 +3,6 @@ import {
     Entity,
     JoinColumn,
     ManyToOne, OneToMany,
-    OneToOne,
     PrimaryColumn,
     PrimaryGeneratedColumn
 } from "typeorm"
@@ -12,6 +11,7 @@ import {RestauranteEmpleadoEntity} from "./restaurante-empleado.entity";
 import {UsuariosEntity} from "./usuarios.entity";
 import {estados} from "../../app/interfaces/order.interfaces";
 import {PedidosPlatosEntity} from "./pedidos-platos.entity";
+import { randomInt } from "crypto";
 
 
 @Entity({
@@ -33,10 +33,16 @@ export class PedidosEntity {
     @Column('varchar')
     descripcion!: string
 
+    @Column('int', {default: randomInt(9999)})
+    codigo!: number
+
     @Column()
     @ManyToOne(
         () => UsuariosEntity,
         (user) => user.id,
+        {
+            eager: true
+        }
     )
     @JoinColumn({name: 'id_cliente'})
     id_cliente: UsuariosEntity | number

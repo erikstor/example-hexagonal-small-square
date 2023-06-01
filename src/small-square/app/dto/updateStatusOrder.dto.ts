@@ -1,34 +1,45 @@
-import {IsNotEmpty, IsNumber, IsString, Min, Validate} from "class-validator";
-import {ApiProperty} from "@nestjs/swagger";
-import { StatusFieldValidator } from "../../infra/validators/order.validator";
-import { estados } from "../interfaces/order.interfaces";
-
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Min, Validate } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { StatusFieldValidator } from '../../infra/validators/order.validator';
 
 export class UpdateStatusOrder {
+  @ApiProperty({
+    example: 1,
+    description: 'Debe ser un numero mayor o igual a 1',
+    required: true,
+  })
+  @IsNotEmpty({ message: 'El campo orden es requerido' })
+  @IsNumber(
+    {},
+    { message: 'El campo orden debe ser un numero entero positivo' },
+  )
+  @Min(1, { message: 'El campo orden debe ser un numero entero positivo' })
+  order: number;
 
-    @ApiProperty({
-        example: 1,
-        description: 'Debe ser un numero mayor o igual a 1',
-        required: true
-    })
-    @IsNotEmpty({message: 'El campo orden es requerido'})
-    @IsNumber({}, {message: 'El campo orden debe ser un numero entero positivo'})
-    @Min(1, {message: 'El campo orden debe ser un numero entero positivo'})
-    order: number
+  @ApiProperty({
+    example: 'READY',
+    description: 'El campo estado debe ser una cadena de texto',
+    required: true,
+  })
+  @IsNotEmpty({ message: 'El campo estado es requerido' })
+  @IsString({ message: 'El campo estado debe ser una cadena de texto' })
+  @Validate(StatusFieldValidator, {
+    message: 'El estado no contiene un valor valido',
+  })
+  status: string;
 
-
-    @ApiProperty({
-        example: 'READY',
-        description: 'El campo estado debe ser una cadena de texto',
-        required: true
-    })
-    @IsNotEmpty({message: 'El campo estado es requerido'})
-    @IsString({message: 'El campo estado debe ser una cadena de texto'})
-    @Validate(StatusFieldValidator,
-        {message: 'El estado no contiene un valor valido'}
-    )
-    status: string
-
-    //TODO: agregar validacion para el pin de seguridad en formato numerico
-
+  @ApiProperty({
+    name: 'code',
+    example: 9999,
+    description: 'El campo estado debe ser numerico',
+    required: true,
+  })
+  @IsNotEmpty({ message: 'El campo estado es requerido' })
+  @IsNumber({}, { message: 'El campo estado debe ser numerico' })
+  @Min(1, { message: 'El campo orden debe ser un numero entero positivo' })
+  @Validate(StatusFieldValidator, {
+    message: 'El estado no contiene un valor valido',
+  })
+  @IsOptional()
+  code: number;
 }

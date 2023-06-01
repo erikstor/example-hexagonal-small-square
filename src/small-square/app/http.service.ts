@@ -20,6 +20,9 @@ export class HttpService {
             });
 
         if (error) {
+
+            console.log(error);            
+
             throw new HttpException(
                 {
                     message: 'El consumo de un servicio externo fallo',
