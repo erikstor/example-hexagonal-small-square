@@ -9,7 +9,7 @@ async function bootstrap() {
     const logger = new Logger()
 
     const config = new DocumentBuilder()
-        .setTitle('Microservicio de usuarios')
+        .setTitle('Microservicio de plazoleta')
         .setDescription('Api que expone las funcionalidades correspondientes al microservicio de la plazoleta')
         .setVersion('1.0')
         .addBearerAuth()
