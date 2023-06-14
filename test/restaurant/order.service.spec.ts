@@ -67,6 +67,8 @@ describe('OrderService', () => {
       RestaurantEmployeeRepository,
     );
     restaurantService = moduleRef.get<RestaurantService>(RestaurantService);
+
+    await moduleRef.close()
   });
 
   describe('createOrder', () => {
@@ -126,7 +128,7 @@ describe('OrderService', () => {
         description: 'Test Order',
       };
 
-      const result = await orderService.createOrder(orderCreateDto, mockClient);
+      const result = await orderService.createOrder(orderCreateDto, mockClient, '');
 
       expect(result.order).toEqual({ id: 1 });
       expect(result.items).toEqual([{ id: 1 }]);
@@ -153,6 +155,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 0,
         pedidos_platos: undefined,
+        codigo: 1231
       };
 
       jest
@@ -168,7 +171,7 @@ describe('OrderService', () => {
       };
 
       await expect(
-        orderService.createOrder(orderCreateDto, mockClient),
+        orderService.createOrder(orderCreateDto, mockClient, ''),
       ).rejects.toThrow(BadRequestException);
 
     });
@@ -187,6 +190,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 0,
         pedidos_platos: undefined,
+        codigo: 1111
       };
 
       jest.spyOn(orderRepository, 'findOneBy').mockResolvedValue(mockOrder);
@@ -268,6 +272,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 1,
         pedidos_platos: undefined,
+        codigo: 1111
       };
       const mockEmployeeRestaurant: RestauranteEmpleadoEntity = {
         id: 1,
@@ -303,6 +308,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 0,
         pedidos_platos: undefined,
+        codigo: 11111
       };
 
       jest.spyOn(orderRepository, 'findOneBy').mockResolvedValue(mockOrder);
@@ -317,7 +323,7 @@ describe('OrderService', () => {
 
   describe('updateStatusToDeliberyOrder', () => {
     it('should update the status of an order to DELIVERY', async () => {
-      const mockData: UpdateStatusOrder = { order: 1, status: 'DELIVERY' };
+      const mockData: UpdateStatusOrder = { order: 1, status: 'DELIVERY', code:111  };
       const mockOrder: PedidosEntity = {
         id: 1,
         fecha: undefined,
@@ -326,6 +332,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 0,
         pedidos_platos: undefined,
+        codigo: 111
       };
 
       jest.spyOn(orderService, 'getOrderById').mockResolvedValue(mockOrder);
@@ -333,7 +340,7 @@ describe('OrderService', () => {
         .spyOn(orderService, 'updateStatusOrder')
         .mockResolvedValue(mockOrder as any);
 
-      const result = await orderService.updateStatusToDeliberyOrder(mockData);
+      const result = await orderService.updateStatusToDeliberyOrder(mockData, '');
 
       expect(result).toEqual(mockOrder);
     });
@@ -343,7 +350,7 @@ describe('OrderService', () => {
 
   describe('updateStatusToPendingOrder', () => {
     it('should update the status of an order to PENDING', async () => {
-      const mockData: UpdateStatusOrder = { order: 1, status: 'PENDING' };
+      const mockData: UpdateStatusOrder = { order: 1, status: 'PENDING', code:111 };
       const mockOrder: PedidosEntity = {
         id: 1,
         fecha: undefined,
@@ -352,6 +359,7 @@ describe('OrderService', () => {
         id_cliente: 0,
         id_restaurante: 0,
         pedidos_platos: undefined,
+        codigo: 12312
       };
 
       jest.spyOn(orderService, 'getOrderById').mockResolvedValue(mockOrder);

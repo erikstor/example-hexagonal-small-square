@@ -65,7 +65,7 @@ describe('RestaurantService', () => {
     jwtService = module.get<JwtService>(JwtService);
 
 
-    module.close()
+    await module.close()
 
   });
 
