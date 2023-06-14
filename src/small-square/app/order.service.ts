@@ -111,20 +111,22 @@ export class OrderService {
         orderDishes,
       );
 
-      await this.httpService.request({
-        url: `${this.configService.get(
-          'BASE_URL_MESSAGE_MICROSERVICE',
-        )}/send-message`,
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: token,
-        },
-        method: 'POST',
-        data: {
-          body: `${MESSAGE_SENDED_WHEN_CREATE_ORDER} ${order.codigo}`,
-          to: client.celular,
-        },
-      });
+      if(this.configService.get('ENVIRONTMENT') === 'prod') {
+        await this.httpService.request({
+          url: `${this.configService.get(
+            'BASE_URL_MESSAGE_MICROSERVICE',
+          )}/send-message`,
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: token,
+          },
+          method: 'POST',
+          data: {
+            body: `${MESSAGE_SENDED_WHEN_CREATE_ORDER} ${order.codigo}`,
+            to: client.celular,
+          },
+        });
+      }
 
       return { order, items: result };
     } catch (e) {
@@ -274,7 +276,7 @@ export class OrderService {
 
       const orderUpdated = await this.updateStatusOrder(order, data.status);
 
-      if (orderUpdated.estado === estados.READY) {
+      if (orderUpdated.estado === estados.READY && this.configService.get('ENVIRONTMENT') === 'prod') {
         await this.httpService.request({
           url: `${this.configService.get(
             'BASE_URL_MESSAGE_MICROSERVICE',
