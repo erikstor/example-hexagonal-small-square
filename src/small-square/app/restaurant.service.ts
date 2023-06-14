@@ -177,9 +177,8 @@ export class RestaurantService {
                 .where("platos.activo = true")
                 .andWhere('platos.restaurante = :restaurant', {restaurant})
                 .innerJoinAndSelect('platos.categoria', 'categoria', 'platos.categoria = categoria.id')
-                .groupBy('categoria')
-                .addGroupBy('platos.id')
-                .addGroupBy('categoria.id')
+                .groupBy('categoria.id')
+                .addGroupBy('platos.id')                
                 .select([
                     'platos.id',
                     'platos.nombre',

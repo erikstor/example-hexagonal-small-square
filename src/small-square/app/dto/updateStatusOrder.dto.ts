@@ -37,9 +37,6 @@ export class UpdateStatusOrder {
   @IsNotEmpty({ message: 'El campo estado es requerido' })
   @IsNumber({}, { message: 'El campo estado debe ser numerico' })
   @Min(1, { message: 'El campo orden debe ser un numero entero positivo' })
-  @Validate(StatusFieldValidator, {
-    message: 'El estado no contiene un valor valido',
-  })
   @IsOptional()
   code: number;
 }

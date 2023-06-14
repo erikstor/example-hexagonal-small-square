@@ -1,0 +1,1032 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/restaurants/create": {
+            "post": {
+                "operationId": "RestaurantController_create",
+                "summary": "Registra un restaurante",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RestaurantCreateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un restaurante"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol administrador"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Restaurante"
+                ]
+            }
+        },
+        "/restaurants/dish/create": {
+            "post": {
+                "operationId": "RestaurantController_dishCreate",
+                "summary": "Registra un plato",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DishCreateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un plato"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol propietario"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Platos"
+                ]
+            }
+        },
+        "/restaurants/dish/update/{id}": {
+            "patch": {
+                "operationId": "RestaurantController_dishUpdate",
+                "summary": "Actualiza un plato",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DishUpdateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un plato"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol propietario"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Platos"
+                ]
+            }
+        },
+        "/restaurants/dish/set-active/{id}": {
+            "patch": {
+                "operationId": "RestaurantController_setActiveDish",
+                "summary": "Actualiza el estado de un plato",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DishSetActiveDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un plato"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol propietario"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Platos"
+                ]
+            }
+        },
+        "/restaurants": {
+            "get": {
+                "operationId": "RestaurantController_getRestaurants",
+                "summary": "Muestra los restaurantes con base a la paginacion",
+                "parameters": [
+                    {
+                        "name": "skip",
+                        "required": true,
+                        "in": "query",
+                        "description": "Determina cuantos restaurantes se va asaltar antes de empezar a contar el valor de take",
+                        "example": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "required": true,
+                        "in": "query",
+                        "description": "Cantidad de restaurantes a mostrar",
+                        "example": 10,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna un listado de restaurantes"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol cliente"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Restaurante"
+                ]
+            }
+        },
+        "/restaurants/dishs": {
+            "get": {
+                "operationId": "RestaurantController_getDishs",
+                "summary": "Muestra los platos con base a la paginacion",
+                "parameters": [
+                    {
+                        "name": "restaurant",
+                        "required": true,
+                        "in": "query",
+                        "description": "Restaurante del cual desea ordenar",
+                        "example": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "skip",
+                        "required": true,
+                        "in": "query",
+                        "description": "Determina cuantos platos se va asaltar antes de empezar a contar el valor de take",
+                        "example": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "required": true,
+                        "in": "query",
+                        "description": "Cantidad de platos a mostrar",
+                        "example": 10,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna un listado de platos"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol cliente"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Platos"
+                ]
+            }
+        },
+        "/restaurants/order": {
+            "post": {
+                "operationId": "RestaurantController_createOrder",
+                "summary": "Registra una orden",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderCreateDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un pedido"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol cliente"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Ordenes"
+                ]
+            }
+        },
+        "/restaurants/register-employee": {
+            "post": {
+                "operationId": "RestaurantController_registerEmployee",
+                "summary": "Endoint que consume el microservicio de usuarios para registrar un empleado y tambien lo asocia a un restaurante",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterEmployeeDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna un usuario de tipo propietario"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Empleado"
+                ]
+            }
+        },
+        "/restaurants/orders": {
+            "get": {
+                "operationId": "RestaurantController_getOrders",
+                "summary": "Muestra las ordenes con base a la paginacion y al filtro de estado",
+                "parameters": [
+                    {
+                        "name": "restaurant",
+                        "required": true,
+                        "in": "query",
+                        "description": "Restaurante al que pertenece el empleado",
+                        "example": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "required": true,
+                        "in": "query",
+                        "description": "Estado por el que seran filtradas las ordenes",
+                        "example": "preparacion",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "skip",
+                        "required": true,
+                        "in": "query",
+                        "description": "Determina cuantos platos se va asaltar antes de empezar a contar el valor de take",
+                        "example": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "take",
+                        "required": true,
+                        "in": "query",
+                        "description": "Cantidad de platos a mostrar",
+                        "example": 10,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna un listado de platos"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol empleado"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Ordenes"
+                ]
+            }
+        },
+        "/restaurants/orders/assign": {
+            "post": {
+                "operationId": "RestaurantController_assignOrder",
+                "summary": "Asigna una orden a un chef",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignOrder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna una orden en su forma basica con la asignacion del chef"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol empleado"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Ordenes"
+                ]
+            }
+        },
+        "/restaurants/orders/employee/status": {
+            "patch": {
+                "operationId": "RestaurantController_updateStatusToDeliberyOrder",
+                "summary": "Actualiza el estado de la orden",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStatusOrder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna una orden en su forma basica con la actualizacion del estado"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol empleado"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Ordenes"
+                ]
+            }
+        },
+        "/restaurants/orders/client/status": {
+            "patch": {
+                "operationId": "RestaurantController_updateStatusToPendingOrder",
+                "summary": "Actualiza el estado de la orden",
+                "parameters": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStatusOrder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Retorna una orden en su forma basica con la actualizacion del estado"
+                    },
+                    "400": {
+                        "description": "Alguno de los parametros enviados en el body son incorrectos"
+                    },
+                    "401": {
+                        "description": "Debe de tener el rol cliente"
+                    },
+                    "500": {
+                        "description": "Error en el servidor"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "tags": [
+                    "Ordenes"
+                ]
+            }
+        },
+        "/health": {
+            "get": {
+                "operationId": "HealthCheckController_checkHealth",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "The Health Check is successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "info": {
+                                            "type": "object",
+                                            "example": {
+                                                "database": {
+                                                    "status": "up"
+                                                }
+                                            },
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "nullable": true
+                                        },
+                                        "error": {
+                                            "type": "object",
+                                            "example": {},
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "nullable": true
+                                        },
+                                        "details": {
+                                            "type": "object",
+                                            "example": {
+                                                "database": {
+                                                    "status": "up"
+                                                }
+                                            },
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "The Health Check is not successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "info": {
+                                            "type": "object",
+                                            "example": {
+                                                "database": {
+                                                    "status": "up"
+                                                }
+                                            },
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "nullable": true
+                                        },
+                                        "error": {
+                                            "type": "object",
+                                            "example": {
+                                                "redis": {
+                                                    "status": "down",
+                                                    "message": "Could not connect"
+                                                }
+                                            },
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "nullable": true
+                                        },
+                                        "details": {
+                                            "type": "object",
+                                            "example": {
+                                                "database": {
+                                                    "status": "up"
+                                                },
+                                                "redis": {
+                                                    "status": "down",
+                                                    "message": "Could not connect"
+                                                }
+                                            },
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "title": "Microservicio de plazoleta",
+        "description": "Api que expone las funcionalidades correspondientes al microservicio de la plazoleta",
+        "version": "1.0",
+        "contact": {}
+    },
+    "tags": [],
+    "servers": [
+        {
+            "url": "api"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearer": {
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "type": "http"
+            }
+        },
+        "schemas": {
+            "RestaurantCreateDto": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "example": "Restaurante 1",
+                        "description": "Debe ser una cadena de texto, puede contener numeros pero no puede ser conformado solo por ellos"
+                    },
+                    "nit": {
+                        "type": "string",
+                        "example": 1234567,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "calle falsa # 123 - 1",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "+573153226435",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "url_logo": {
+                        "type": "string",
+                        "example": "https://www.example.com",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "id_propietario": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    }
+                },
+                "required": [
+                    "nombre",
+                    "nit",
+                    "direccion",
+                    "telefono",
+                    "url_logo",
+                    "id_propietario"
+                ]
+            },
+            "DishCreateDto": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "example": "Plato 1",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "precio": {
+                        "type": "number",
+                        "example": 1234567,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "El plato mas delicioso del mundo",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "url_imagen": {
+                        "type": "string",
+                        "example": "https://www.example.com/imagen.png",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "restaurante": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    },
+                    "categoria": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    }
+                },
+                "required": [
+                    "nombre",
+                    "precio",
+                    "descripcion",
+                    "url_imagen",
+                    "restaurante",
+                    "categoria"
+                ]
+            },
+            "DishUpdateDto": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "example": "Plato 1",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "precio": {
+                        "type": "number",
+                        "example": 1234567,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "descripcion": {
+                        "type": "string",
+                        "example": "El plato mas delicioso del mundo",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "url_imagen": {
+                        "type": "string",
+                        "example": "https://www.example.com/imagen.png",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "restaurante": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    },
+                    "categoria": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    },
+                    "activo": {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "Debe ser un boleano"
+                    }
+                },
+                "required": [
+                    "restaurante"
+                ]
+            },
+            "DishSetActiveDto": {
+                "type": "object",
+                "properties": {
+                    "activo": {
+                        "type": "boolean",
+                        "example": true,
+                        "description": "Debe ser un boleano"
+                    },
+                    "restaurante": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero"
+                    }
+                },
+                "required": [
+                    "activo",
+                    "restaurante"
+                ]
+            },
+            "OrderCreateDto": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "format": "date-time",
+                        "type": "string",
+                        "example": "2023-01-01",
+                        "description": "Debe ser una fecha valida"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Sin cebolla por favor",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "restaurant": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "chef": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "dishes": {
+                        "example": [
+                            {
+                                "id_plato": 1,
+                                "cantidad": 1
+                            }
+                        ],
+                        "description": "Debe ser una lista o arreglo de objetos con clave id_plato numerico y cantidad numerico",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "date",
+                    "description",
+                    "restaurant",
+                    "chef",
+                    "dishes"
+                ]
+            },
+            "RegisterEmployeeDto": {
+                "type": "object",
+                "properties": {
+                    "correo": {
+                        "type": "string",
+                        "example": "example@example.com",
+                        "description": "Debe ser una cadena de texto con formato email valido"
+                    },
+                    "clave": {
+                        "type": "string",
+                        "example": "password",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Pepito",
+                        "description": "El nombre es obligatorio, debe contener minimo tres letras"
+                    },
+                    "apellido": {
+                        "type": "string",
+                        "example": "Perez",
+                        "description": "El apellido es obligatorio, debe contener minimo tres letras"
+                    },
+                    "dni": {
+                        "type": "number",
+                        "example": 123456789,
+                        "description": "La identificacion es obligatoria, debe ser numerica"
+                    },
+                    "celular": {
+                        "type": "string",
+                        "example": "+573153226431",
+                        "description": "El celular es obligatorio, debe contener maximo 13 caracteres, si es un celular debe agregar el \"+\""
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "example": "employee",
+                        "description": "Debe ser una cadena de texto"
+                    },
+                    "restaurante": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "La identificacion es obligatoria, debe ser numerica"
+                    }
+                },
+                "required": [
+                    "correo",
+                    "clave",
+                    "nombre",
+                    "apellido",
+                    "dni",
+                    "celular",
+                    "tipo",
+                    "restaurante"
+                ]
+            },
+            "AssignOrder": {
+                "type": "object",
+                "properties": {
+                    "order": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "chef": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "restaurant": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    }
+                },
+                "required": [
+                    "order",
+                    "chef",
+                    "restaurant"
+                ]
+            },
+            "UpdateStatusOrder": {
+                "type": "object",
+                "properties": {
+                    "order": {
+                        "type": "number",
+                        "example": 1,
+                        "description": "Debe ser un numero mayor o igual a 1"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "READY",
+                        "description": "El campo estado debe ser una cadena de texto"
+                    },
+                    "code": {
+                        "type": "number",
+                        "example": 9999,
+                        "description": "El campo estado debe ser numerico"
+                    }
+                },
+                "required": [
+                    "order",
+                    "status",
+                    "code"
+                ]
+            }
+        }
+    }
+}

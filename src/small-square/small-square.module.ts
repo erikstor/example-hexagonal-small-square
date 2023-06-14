@@ -20,9 +20,11 @@ import {ConfigService} from "@nestjs/config";
 import {UsuariosEntity} from "./domain/entities/usuarios.entity";
 import {RolesEntity} from "./domain/entities/roles.entity";
 import { OrderService } from './app/order.service';
+import { TerminusModule } from '@nestjs/terminus';
+import { HealthCheckController } from './infra/controllers/health.controller';
 
 @Module({
-    controllers: [RestaurantController],
+    controllers: [RestaurantController, HealthCheckController],
     providers: [
         ConfigService,
         JwtService,
@@ -47,7 +49,8 @@ import { OrderService } from './app/order.service';
             UsuariosEntity,
             RolesEntity
         ]),
-        JwtModule.register({secret: 'hard!to-guess_secret'})
+        JwtModule.register({secret: 'hard!to-guess_secret'}),
+        TerminusModule
     ],
     exports: [
         RestaurantService

@@ -281,7 +281,7 @@ export class RestaurantController {
     status: 400,
     description: 'Alguno de los parametros enviados en el body son incorrectos',
   })
-  @ApiResponse({ status: 401, description: 'Debe de tener el rol cliente' })
+  @ApiResponse({ status: 401, description: 'Debe de tener el rol empleado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   @UseGuards(EmployeeGuard)
   //todo crear un dto para esto
@@ -359,7 +359,7 @@ export class RestaurantController {
     status: 400,
     description: 'Alguno de los parametros enviados en el body son incorrectos',
   })
-  @ApiResponse({ status: 401, description: 'Debe de tener el rol empleado' })
+  @ApiResponse({ status: 401, description: 'Debe de tener el rol cliente' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
   @UseGuards(ClientGuard)
   updateStatusToPendingOrder(@Body() body: UpdateStatusOrder) {
