@@ -63,6 +63,10 @@ describe('RestaurantService', () => {
     httpService = module.get<HttpService>(HttpService);
     configService = module.get<ConfigService>(ConfigService);
     jwtService = module.get<JwtService>(JwtService);
+
+
+    module.close()
+
   });
 
   describe('create', () => {
