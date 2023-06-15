@@ -32,7 +32,6 @@ import { OwnerGuard, AdminGuard, ClientGuard, EmployeeGuard } from '../guards';
 import { RegisterEmployeeDto } from '../../app/dto/registerEmployee.dto';
 import { estados } from '../../app/interfaces/order.interfaces';
 import { OrderService } from '../../app/order.service';
-import { log } from 'console';
 
 @Controller('restaurants')
 export class RestaurantController {
@@ -155,8 +154,7 @@ export class RestaurantController {
   })
   @ApiResponse({ status: 401, description: 'Debe de tener el rol cliente' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  @UseGuards(ClientGuard)
-  //todo crear un dto para esto
+  @UseGuards(ClientGuard)  
   getRestaurants(@Query() query: { take: number; skip: number }) {
     return this.restaurantService.getRestaurants(query);
   }
@@ -191,8 +189,7 @@ export class RestaurantController {
   })
   @ApiResponse({ status: 401, description: 'Debe de tener el rol cliente' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  @UseGuards(ClientGuard)
-  //todo crear un dto para esto
+  @UseGuards(ClientGuard)  
   getDishs(@Query() query: { take: number; skip: number; restaurant: number }) {
     return this.restaurantService.getDishs(query);
   }
@@ -283,8 +280,7 @@ export class RestaurantController {
   })
   @ApiResponse({ status: 401, description: 'Debe de tener el rol empleado' })
   @ApiResponse({ status: 500, description: 'Error en el servidor' })
-  @UseGuards(EmployeeGuard)
-  //todo crear un dto para esto
+  @UseGuards(EmployeeGuard)  
   getOrders(
     @Query()
     query: {

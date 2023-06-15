@@ -2,8 +2,6 @@ import {BadRequestException, Injectable, InternalServerErrorException,} from '@n
 import {
     CategoryRepository,
     DishRepository,
-    OrderDishRepository,
-    OrderRepository,
     RestaurantEmployeeRepository,
     RestaurantRepository
 } from "../infra/repositories";
@@ -82,7 +80,7 @@ export class RestaurantService {
         const plato = new PlatosEntity()
 
         try {
-            return this.saveDish(plato, data)
+            return await this.saveDish(plato, data)
         } catch (e) {
             throw new InternalServerErrorException('Ocurrio un fallo en el guardado del plato')
         }
@@ -120,7 +118,7 @@ export class RestaurantService {
         if (!plato) throw new BadRequestException({message: 'El plato no fue encontrado'})
 
         try {
-            return this.saveDish(plato, data)
+            return await this.saveDish(plato, data)
         } catch (e) {
             throw new InternalServerErrorException(e)
         }

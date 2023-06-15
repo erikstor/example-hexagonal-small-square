@@ -1,4 +1,4 @@
-import {ArrayMinSize, IsArray, IsDate, IsDateString, IsNotEmpty, IsNumber, IsString, Min} from "class-validator";
+import {ArrayMinSize, IsArray, IsDateString, IsNotEmpty, IsNumber, IsString, Min} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 import {OrderInterfaces} from "../interfaces/order.interfaces";
 
@@ -47,7 +47,6 @@ export class OrderCreateDto {
     chef: number
 
 
-    //todo: validar con un each los objectos internos
     @ApiProperty({
         example: [
             {

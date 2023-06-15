@@ -1,6 +1,5 @@
-import {Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm"
+import {Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm"
 import {UsuariosEntity} from "./usuarios.entity";
-import {PedidosEntity} from "./pedidos.entity";
 import {RestaurantesEntity} from "./restaurantes.entity";
 
 @Entity({

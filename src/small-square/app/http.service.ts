@@ -5,9 +5,6 @@ import {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios";
 @Injectable()
 export class HttpService {
 
-    constructor() {
-    }
-
     async request(options: AxiosRequestConfig): Promise<any> {
 
         let error: AxiosError

@@ -1,12 +1,24 @@
-name: Build
+name: CI with SonarCloud, ECR, and Elastic Beanstalk
 on:
   push:
     branches:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
+   
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  AWS_REGION: 'us-east-2'
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ECR_REPO_NAME: 'micro-small-square'
+  AWS_ECR_REPO_LINK: 'public.ecr.aws/m2q9v7q3/micro-small-square'
+  AWS_ECR_REPO_PATH: 'public.ecr.aws/m2q9v7q3'
+  AWS_EB_ENVIRONMENT: 'Microservice-small-square-env'
+  AWS_EB_APPLICATION: 'microservice-small-square'
+    
 jobs:
-  sonarcloud:
+  build-and-test:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
@@ -18,18 +30,57 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: npm i
+        run: npm ci
       - name: Test and coverage
         run: npm run test:cov
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # with:
-        #   # Additional arguments for the sonarcloud scanner
-        #   args:
-        #     # Unique keys of your project and organization. You can find them in SonarCloud > Information (bottom-left menu)
-        #     # mandatory
-        #     -Dsonar.projectKey=erikstor_example-hexagonal-small-square
-        #     -Dsonar.organization=erikstor
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      - name: Build
+        run: npm run build
+  deploy-ecr:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build and push Docker image to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker image to ECR
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{env.AWS_ECR_REPO_PATH}}
+          docker build -t ${{env.AWS_ECR_REPO_NAME}} .
+          docker tag ${{env.AWS_ECR_REPO_NAME}}:latest ${{env.AWS_ECR_REPO_LINK}}:latest
+          docker push ${{env.AWS_ECR_REPO_LINK}}:latest
+  
+  
+  deploy-eb:
+    needs: deploy-ecr
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ env.AWS_EB_APPLICATION }}
+          environment_name: ${{ env.AWS_EB_ENVIRONMENT }}
+          version_label: 'latest'
+          region: ${{ env.AWS_REGION }}          
+          use_existing_version_if_available: true

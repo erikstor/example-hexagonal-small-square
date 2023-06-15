@@ -74,7 +74,7 @@ export class OrderService {
     }
 
     const arrDishesId = data.dishes.map((current) => current.id_plato);
-    const [platos, count] = await this.searchDishesInRestaurant(
+    const [_, count] = await this.searchDishesInRestaurant(
       arrDishesId,
       data.restaurant,
     );
@@ -98,7 +98,7 @@ export class OrderService {
       const orderDishes = [];
 
       for (const item of data.dishes) {
-        const orderDish = await this.orderDishRepository.create({
+        const orderDish = this.orderDishRepository.create({
           platos: item.id_plato,
           cantidad: item.cantidad,
           pedido: order.id,
@@ -240,7 +240,7 @@ export class OrderService {
   }
 
   async getOrderById(id: number): Promise<PedidosEntity> {
-    const order = this.orderRepository.findOneBy({ id });
+    const order = await this.orderRepository.findOneBy({ id });
 
     if (!order) throw new BadRequestException('El pedido no existe');
 
@@ -325,7 +325,7 @@ export class OrderService {
     try {
       order.estado = estados[status];
 
-      return this.orderRepository.save(order);
+      return await this.orderRepository.save(order);
     } catch (e) {
       throw new InternalServerErrorException(e);
     }

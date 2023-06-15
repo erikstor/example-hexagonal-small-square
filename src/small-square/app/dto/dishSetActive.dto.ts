@@ -1,8 +1,5 @@
-import {IsBoolean, IsNotEmpty, IsNumber, IsString, Min, Validate} from "class-validator";
+import {IsBoolean, IsNotEmpty, IsNumber} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
-import {
-    UrlFieldValidator
-} from "../../infra/validators/restaurant.validator";
 
 
 export class DishSetActiveDto {

@@ -1,6 +1,5 @@
-import {ArrayMinSize, IsArray, IsDate, IsDateString, IsNotEmpty, IsNumber, IsString, Min} from "class-validator";
+import {IsNotEmpty, IsNumber, Min} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
-import {OrderInterfaces} from "../interfaces/order.interfaces";
 
 
 export class AssignOrder {
