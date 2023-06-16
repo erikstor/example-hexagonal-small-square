@@ -73,8 +73,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Generate deployment package
-        run: zip -r deploy.zip ./Dockerrun.aws.json
+      # only use for set the latest versions
+      # - name: Generate deployment package
+      #   run: zip -r deploy.zip ./Dockerrun.aws.json
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -84,5 +85,5 @@ jobs:
           environment_name: ${{ env.AWS_EB_ENVIRONMENT }}
           version_label: 'latest'
           region: ${{ env.AWS_REGION }}       
-          deployment_package: deploy.zip           
-          # use_existing_version_if_available: true
+          # deployment_package: deploy.zip         # only use for set the latest versions
+          use_existing_version_if_available: true
